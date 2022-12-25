@@ -115,9 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const textarea = document.getElementById('input');
 	const counter = new WordCounter(0, 1500);
 	const settings = new Settings(counter);
-	let idle;
+	let idleTimeout, counterInterval;
 
 	function save() {
+		counter.update(textarea.value);
 		localStorage.text = textarea.value;
 	}
 
@@ -128,19 +129,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	textarea.addEventListener('input', async () => {
-		counter.update(textarea.value);
-		if (idle) clearTimeout(idle);
-		idle = setTimeout(save, 500);
-	});
-
 	textarea.addEventListener('selectionchange', async () => {
 		if (textarea.selectionStart != textarea.selectionEnd) {
 			const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)
 			if (countWords(selection)) counter.update(selection);
 			return;
 		}
-		counter.update(textarea.value);
+		if (idleTimeout) clearTimeout(idleTimeout);
+		idleTimeout = setTimeout(save, 500);
+		if (counter.charCount < 50000) {
+			counter.update(textarea.value);
+			if (counterInterval) clearInterval(counterInterval);
+		}
+		else if (!counterInterval) counterInterval = setInterval(() => counter.update(textarea.value), 1000);
 	});
 
 	if (localStorage.text) textarea.value = localStorage.text;
