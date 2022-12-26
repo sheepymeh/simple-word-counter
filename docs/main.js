@@ -135,12 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	textarea.addEventListener('selectionchange', async () => {
+		if (idleTimeout) clearTimeout(idleTimeout);
 		if (textarea.selectionStart != textarea.selectionEnd) {
 			const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)
 			if (countWords(selection)) counter.update(selection);
 			return;
 		}
-		if (idleTimeout) clearTimeout(idleTimeout);
 		idleTimeout = setTimeout(save, 500);
 		if (counter.charCount < 50000) {
 			counter.update(textarea.value);
