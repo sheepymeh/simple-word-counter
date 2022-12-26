@@ -45,7 +45,7 @@ body::before {
 textarea {
 	width: 100%;
 	height: 100vh;
-	padding: 100px 50px;
+	padding: 100px 50px 100px 50vh;
 	display: block;
 	border: 0;
 	resize: none;
@@ -197,6 +197,7 @@ input[type=number] {
 @media (min-width: 800px) {
 	textarea {
 		padding: 100px calc(100vw / 2 - 350px);
+		padding-bottom: 50vh;
 	}
 }
 

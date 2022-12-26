@@ -4,10 +4,10 @@ function insertAtCursor(textarea, text) {
 
 function countWords(words) {
 	const ignored = ['', '-', '–', '—'];
-	return words.trim().replace('\n', ' ').split(' ').filter(c => !ignored.includes(c)).length;
+	return words.trim().replaceAll('\n', ' ').split(' ').filter(c => !ignored.includes(c)).length;
 }
 function countChars(words) {
-	return words.trim().replace('\r', '').length;
+	return words.trim().replaceAll('\r', '').length;
 }
 class WordCounter {
 	constructor(maxWords=0, maxChars=0) {
@@ -95,15 +95,20 @@ class Settings {
 	load() {
 		for (const [k, v] of Object.entries(this.settings))
 			this.elements[k].value = v;
+		this.set();
 	}
 
 	save() {
 		for (const [k, v] of Object.entries(this.elements))
 			this.settings[k] = v.value;
 		localStorage.settings = JSON.stringify(this.settings);
+		this.set();
+		this.toggle();
+	}
+
+	set() {
 		this.counter.maxWords = this.settings.limitType == 'word' ? this.settings.limitValue : 0;
 		this.counter.maxChars = this.settings.limitType == 'char' ? this.settings.limitValue : 0;
-		this.toggle();
 	}
 
 	toggle() {
@@ -113,7 +118,7 @@ class Settings {
 
 document.addEventListener('DOMContentLoaded', () => {
 	const textarea = document.getElementById('input');
-	const counter = new WordCounter(0, 1500);
+	const counter = new WordCounter;
 	const settings = new Settings(counter);
 	let idleTimeout, counterInterval;
 
