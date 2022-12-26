@@ -33,7 +33,6 @@ class WordCounter {
 		return this._wordCount;
 	}
 	addWords(delta) {
-		console.log(delta)
 		this.wordCount = this.wordCount + delta;
 	}
 
@@ -134,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	textarea.addEventListener('selectionchange', async () => {
+	function inputHandler() {
 		if (idleTimeout) clearTimeout(idleTimeout);
 		if (textarea.selectionStart != textarea.selectionEnd) {
 			const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd)
@@ -147,7 +146,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (counterInterval) clearInterval(counterInterval);
 		}
 		else if (!counterInterval) counterInterval = setInterval(() => counter.update(textarea.value), 1000);
+	}
+
+	
+
+	textarea.addEventListener('input', async e => {
+		if (e.inputType == 'deleteContentForward') inputHandler();
 	});
+
+	textarea.addEventListener('selectionchange', inputHandler);
 
 	if (localStorage.text) textarea.value = localStorage.text;
 	counter.update(textarea.value);
